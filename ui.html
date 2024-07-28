@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --spacing: 8px;
+      --header-bg-color: #0079c1;
+      --logo-width: 78px;
+      --logo-height: 32px;
+      --close-icon-size: 32px;
+      --section-padding: 16px;
+      --button-bg-color: #0079c1;
+      --button-text-color: white;
+      --button-icon-size: 16px;
+      --file-picker-border-color: #D9DCE1;
+      --file-picker-border-radius: 4px;
+      --file-picker-padding: 8px;
+      --file-picker-link-color: #0079c1;
+      --error-color: red;
+      --secondary-button-bg-color: white;
+      --secondary-button-text-color: #0079c1;
+      --secondary-button-border-color: #D9DCE1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 500px;
+      width: 500px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--header-bg-color);
+      padding: var(--spacing);
+    }
+
+    .header img {
+      height: var(--logo-height);
+      width: var(--logo-width);
+    }
+
+    .header .title {
+      flex: 1;
+      text-align: center;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .header .title span {
+      font-weight: normal;
+    }
+
+    .header .close-icon {
+      height: var(--close-icon-size);
+      width: var(--close-icon-size);
+    }
+
+    .section {
+      padding: var(--spacing);
+      /* border: 1px solid #ccc; */
+    }
+
+    .section-1 {
+      padding: var(--section-padding);
+      flex: 0;
+      /* Ensure the section height hugs the content */
+    }
+
+    .section-1 .title-container {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: var(--spacing);
+    }
+
+    .section-1 .title {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-right: var(--spacing);
+    }
+
+    .section-1 .subtitle {
+      font-size: 0.875rem;
+      font-weight: 300;
+    }
+
+    .section-1 .file-picker-container {
+      display: flex;
+      align-items: center;
+      gap: var(--section-padding);
+    }
+
+    .section-1 .file-picker {
+      flex: 1;
+      padding: var(--file-picker-padding);
+      border: 1px solid var(--file-picker-border-color);
+      border-radius: var(--file-picker-border-radius);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-1 .file-picker input[type="text"] {
+      flex: 1;
+      border: none;
+      outline: none;
+    }
+
+    .section-1 .file-picker input[type="file"] {
+      display: none;
+    }
+
+    .section-1 .file-picker .browse-link {
+      color: var(--file-picker-link-color);
+      cursor: pointer;
+    }
+
+    .section-1 .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--button-bg-color);
+      color: var(--button-text-color);
+      padding: var(--spacing);
+      border: none;
+      border-radius: 9999px;
+      cursor: pointer;
+    }
+
+    .section-1 .button img {
+      height: var(--button-icon-size);
+      width: var(--button-icon-size);
+      margin-right: var(--spacing);
+    }
+
+    .error-message {
+      color: var(--error-color);
+      margin-top: var(--spacing);
+    }
+
+    .section-2 {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      /* Ensure children are spaced out */
+      width: 100%;
+      gap: 16px;
+      height: auto;
+      /* gap: 16px; Horizontal space between file-info-container and buttons */
+    }
+
+    .section-2 .file-info-container {
+      flex: 1;
+      /* Take up the remaining space */
+
+      padding: var(--spacing);
+      border: 1px solid var(--file-picker-border-color);
+      border-radius: var(--file-picker-border-radius);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .section-2 .file-name {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 24px;
+      margin-bottom: 4px;
+    }
+
+    .section-2 .file-path {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 16px;
+    }
+
+    .section-2 .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing);
+      /* flex-shrink: 0; Ensure it does not shrink */
+    }
+
+    .section-2 .button {
+      width: 112px;
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--button-bg-color);
+      color: var(--button-text-color);
+      border: none;
+      border-radius: 9999px;
+      cursor: pointer;
+    }
+
+    .section-2 .button img {
+      height: var(--button-icon-size);
+      width: var(--button-icon-size);
+      margin-right: var(--spacing);
+    }
+
+    .section-2 .refresh-button {
+      background-color: var(--button-bg-color);
+      /* background-color: var(--refresh-button-bg-color); */
+      color: var(--button-text-color);
+
+    }
+
+    .section-2 .change-file-button {
+      background-color: var(--secondary-button-bg-color);
+      color: var(--secondary-button-text-color);
+      border: 1px solid var(--secondary-button-border-color);
+    }
+
+    .section-3 {
+      display: flex;
+      flex-direction: column;
+      gap: var(16px);
+      padding: 16px;
+    }
+
+    .bulk-sync-title {
+      font-size: 1rem;
+      font-weight: 500;
+      padding-bottom: 16px;
+    }
+
+    .bulk-sync-buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bulk-sync-button {
+      width: 30%;
+      padding: 8px 0;
+      background-color: var(--secondary-button-bg-color);
+      color: var(--secondary-button-text-color);
+      border: 1px solid var(--secondary-button-border-color);
+      border-radius: 9999px;
+      cursor: pointer;
+    }
+
+    .section-4 {
+      display: flex;
+      flex-direction: column;
+      gap: var(16px);
+
+      padding: 8px 16px 8px 16px;
+    }
+
+    .dropdown {
+      width: 70%;
+      padding: 8px;
+      padding-right: 24px;
+      /* Increase right padding to create space for the chevron */
+      border: 1px solid var(--secondary-button-border-color);
+      border-radius: 4px;
+      margin-right: 16px;
+      appearance: none;
+      /* Remove default dropdown arrow */
+      background: none;
+      position: relative;
+    }
+
+    .dropdown::after {
+      content: 'arrow_drop_down';
+      font-family: 'Material Icons';
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .section-5 {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing);
+      padding: var(--section-padding);
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      /* Align to the right */
+      gap: 8px;
+      color: black;
+      padding-bottom: 8px;
+    }
+
+    .toggle-button {
+      width: 40px;
+      height: 20px;
+      background-color: #ccc;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .toggle-button::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background-color: white;
+      border-radius: 50%;
+      top: 1px;
+      left: 1px;
+      transition: transform 0.3s;
+    }
+
+    .toggle-button.active {
+      background-color: #0079c1;
+    }
+
+    .toggle-button.active::before {
+      transform: translateX(20px);
+    }
+
+    .output-textarea {
+      width: 100%;
+      height: 120px;
+      padding: var(--file-picker-padding);
+      border: 1px solid var(--file-picker-border-color);
+      border-radius: var(--file-picker-border-radius);
+      resize: none;
+    }
+
+    .bulk-sync-buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn-icon {
+      font-size: 16px;
+      margin-right: 4px;
+    }
+
+    .icon-white {
+      color: white;
+      /* Change this to your desired color */
+    }
+
+    .icon-blue {
+      color: #0079c1;
+      /* Change this to your desired color */
+    }
+
+    .error-message {
+      color: red;
+      margin-top: var(--spacing);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <img src="idKFrZ2j-s/idG9t7WPZd.svg" alt="Logo">
+    <div class="title">A.I.D.E <span>v3.0</span></div>
+    <span class="material-symbols-outlined icon-white">
+      close
+    </span>
+  </div>
+  <div class="section section-1">
+    <div class="title-container">
+      <div class="title">Import reference data</div>
+      <div class="subtitle">(.xlsx)</div>
+    </div>
+    <div class="file-picker-container">
+      <div class="file-picker">
+        <input type="text" id="file-input-text" placeholder="Add File">
+        <span class="browse-link" onclick="document.getElementById('file-input').click()">Browse</span>
+        <input type="file" id="file-input" onchange="updateFileName(this)">
+      </div>
+      <button class="button" onclick="loadFile()">
+        <span class="material-symbols-outlined icon-white btn-icon">download</span>
+        <!-- <img src="icon.png" alt="Icon"> -->
+        Load File
+      </button>
+    </div>
+    <div id="error-message" class="error-message"></div>
+  </div>
+
+  <div class="section section-2" style="display: none;">
+    <div class="file-info-container">
+      <div>
+        <div class="file-name" id="file-name"></div>
+        <div class="file-path" id="file-path"></div>
+      </div>
+    </div>
+    <div class="button-container">
+      <button class="button refresh-button" onclick="refreshPage()">
+        <span class="material-symbols-outlined icon-white btn-icon">refresh</span>
+        <!-- <img src="refresh-icon.png" alt="Refresh Icon"> -->
+        Refresh
+      </button>
+      <button class="button change-file-button" onclick="changeFile()">
+        <span class="material-symbols-outlined icon-blue btn-icon">file_open</span>
+        <!-- <img src="change-file-icon.png" alt="Change File Icon"> -->
+        Change
+      </button>
+    </div>
+  </div>
+
+  <div class="section section-3" style="display: none;"">
+  <div class=" bulk-sync-title">Bulk Sync:</div>
+  <div class="bulk-sync-buttons">
+    <button class="button bulk-sync-button" id="business-metrics-btn">Business Metrics</button>
+    <button class="button bulk-sync-button" id="health-check-btn">Health Check</button>
+    <button class="button bulk-sync-button" id="initiatives-btn">Initiatives</button>
+  </div>
+  </div>
+
+  <div class="section section-4" style="display: none;">
+    <div class="bulk-sync-title">Sync Individual KPI:</div>
+    <div class="bulk-sync-buttons">
+      <select class="dropdown" id="sheet-select" placeholder="Select KPI">
+        <option value="">Select a sheet</option>
+        <!-- Add options here -->
+      </select>
+      <button class="button bulk-sync-button" onclick="syncKPI()">Sync</button>
+    </div>
+    <div id="sync-error-message" class="error-message"></div>
+  </div>
+
+  <div class="section section-5" style="display: none;">
+    <div class="toggle-container" style="text-align: right;">
+      <span>Enable Detail Debugging?</span>
+      <div class="toggle-button" id="debug-toggle"></div>
+    </div>
+    <textarea class="output-textarea" placeholder="Output will be displayed here..."></textarea>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <script>
+    let sheetRecords = {}; // Global variable to store records
+    function updateFileName(input) {
+      const filePath = input.value;
+      const fileName = filePath.split('\\').pop().split('/').pop();
+      document.getElementById('file-input-text').value = fileName;
+      document.getElementById('error-message').textContent = ''; // Clear any previous error message
+    }
+
+    function loadFile() {
+      const fileInput = document.getElementById('file-input');
+      const errorMessage = document.getElementById('error-message');
+
+
+      if (fileInput.files.length === 0) {
+        errorMessage.textContent = 'No file selected.';
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        try {
+          const data = new Uint8Array(event.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetNames = workbook.SheetNames;
+
+          sheetRecords = {}; // Clear previous records
+          workbook.SheetNames.forEach(sheetName => {
+            const sheet = workbook.Sheets[sheetName];
+            sheetRecords[sheetName] = XLSX.utils.sheet_to_json(sheet, { raw: false });
+          });
+
+          console.log(sheetRecords);
+          errorMessage.textContent = ''; // Clear any previous error message
+
+          // Populate the dropdown with sheet names
+          const sheetSelect = document.getElementById('sheet-select');
+          sheetSelect.innerHTML = `<option value="" selected>Select KPI</option>` + sheetNames
+            .map(sheetName => `<option value="${sheetName}">${sheetName}</option>`)
+            .join('');
+
+          // Update UI
+          document.querySelector('.section-1').style.display = 'none';
+          document.querySelector('.section-2').style.display = 'flex';
+          document.querySelector('.section-3').style.display = 'block';
+          document.querySelector('.section-4').style.display = 'block';
+          document.querySelector('.section-5').style.display = 'block';
+
+          const outputTextarea = document.querySelector('.output-textarea');
+          outputTextarea.value = ''; // Clear the output textarea
+
+          const fileNameWithoutExtension = file.name.split('.').slice(0, -1).join('.');
+          document.getElementById('file-name').textContent = fileNameWithoutExtension;
+          document.getElementById('file-path').textContent = file.webkitRelativePath || file.name;
+
+        } catch (error) {
+          errorMessage.textContent = 'Error reading file: ' + error.message;
+        }
+      };
+
+      reader.onerror = function () {
+        errorMessage.textContent = 'Error reading file.';
+      };
+
+      reader.readAsArrayBuffer(file); // Read the file as an array buffer
+    }
+
+    function refreshPage() {
+      loadFile();
+    }
+
+    function changeFile() {
+      document.querySelector('.section-1').style.display = 'block';
+      document.querySelector('.section-2').style.display = 'none';
+      document.querySelector('.section-3').style.display = 'none';
+      document.querySelector('.section-4').style.display = 'none';
+      document.querySelector('.section-5').style.display = 'none';
+    }
+    function syncKPI() {
+      const sheetSelect = document.getElementById('sheet-select');
+      const selectedValue = sheetSelect.value;
+      const syncErrorMessage = document.getElementById('sync-error-message');
+
+      if (selectedValue === "") {
+        syncErrorMessage.textContent = "Please select a KPI from the dropdown.";
+      } else {
+        syncErrorMessage.textContent = ""; // Clear any previous error message
+        const records = sheetRecords[selectedValue] || [];
+        // console.log(`Syncing KPI: ${selectedValue}`, records);
+        const outputTextarea = document.querySelector('.output-textarea');
+        outputTextarea.value = ''; // Clear the output textarea
+        parent.postMessage({
+          pluginMessage: {
+            type: 'sync-kpi',
+            mode: 'single',
+            data: {
+              sheetName: selectedValue,
+              records: records
+            }
+          }
+        }, '*');
+      }
+    }
+
+    function handleButtonClick(type) {
+      const outputTextarea = document.querySelector('.output-textarea');
+      outputTextarea.value = ''; // Clear the output textarea
+      parent.postMessage({
+        pluginMessage: {
+          type: type,
+          mode: 'bulk',
+          data: sheetRecords
+        }
+      }, '*');
+    }
+
+    const debugToggle = document.getElementById('debug-toggle');
+    let isDebugEnabled = false;
+
+    debugToggle.addEventListener('click', () => {
+      isDebugEnabled = !isDebugEnabled;
+      debugToggle.classList.toggle('active', isDebugEnabled);
+      sendDebugStateToFigma(isDebugEnabled);
+    });
+    function sendDebugStateToFigma(isDebugEnabled) {
+      parent.postMessage({ pluginMessage: { type: 'toggle-debug', isDebugEnabled } }, '*');
+    }
+
+    document.getElementById('business-metrics-btn').addEventListener('click', () => handleButtonClick('BM'));
+    document.getElementById('health-check-btn').addEventListener('click', () => handleButtonClick('HC'));
+    document.getElementById('initiatives-btn').addEventListener('click', () => handleButtonClick('IN'));
+    // Select the textarea element
+    const outputTextarea = document.querySelector('.output-textarea');
+
+    const messageQueue = [];
+    let isProcessing = false;
+
+    window.addEventListener('message', (event) => {
+      const message = event.data.pluginMessage;
+      if (message) {
+        switch (message.type) {
+          case 'sync-kpi-response':
+            console.log('Sync KPI Response:', message.data);
+            outputTextarea.value += message.message + '\n';
+            // Handle the response for sync KPI
+            break;
+          case 'BM-response':
+            console.log('Business Metrics Response:', message.data);
+            outputTextarea.value += message.message + '\n';
+            // Handle the response for Business Metrics
+            break;
+          case 'HC-response':
+            console.log('Health Check Response:', message.data);
+            outputTextarea.value += message.message + '\n';
+            // Handle the response for Health Check
+            break;
+          case 'IN-response':
+            console.log('Initiatives Response:', message.data);
+            outputTextarea.value += message.message + '\n';
+            // Handle the response for Initiatives
+            break;
+          case 'debug':
+          messageQueue.push(message.message);
+          processQueue();
+            // outputTextarea.value += message.message + '\n';
+            break;
+          default:
+            console.log('Unknown response type:', message.type);
+        }
+      }
+    });
+
+    async function processQueue() {
+            if (isProcessing) return;
+            isProcessing = true;
+
+            while (messageQueue.length > 0) {
+                const data = messageQueue.shift();
+                updateUI(data);
+                await new Promise(resolve => setTimeout(resolve, 100)); // Adjust delay as needed
+            }
+
+            isProcessing = false;
+        }
+
+        // Function to update the UI
+        function updateUI(data) {
+            // const outputTextarea = document.querySelector('.output-textarea');
+            outputTextarea.value += data + '\n';
+        }
+  </script>
+</body>
+
+</html>

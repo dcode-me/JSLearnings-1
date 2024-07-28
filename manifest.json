@@ -1,0 +1,21 @@
+{
+  "name": "HelperUtility",
+  "id": "1397997540879791854",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": [
+    "figma"
+  ],
+  "ui": "ui.html",
+  "networkAccess": {
+    "allowedDomains": [
+      "https://cdnjs.cloudflare.com",
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com",
+      "https://www.bmo.com",
+      "https://asset.brandfetch.io"
+    ]
+  }
+}
